@@ -1,0 +1,9 @@
+-f file
+-b block
+-e exist
+-d directory
+-r read
+-w write
+-x execute
+-O owner
+-L link

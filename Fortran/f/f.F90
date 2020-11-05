@@ -1,0 +1,11 @@
+1	PROGRAM ex0301
+2	IMPLICIT NONE
+3		INTEGER::x=1
+4		INTEGER::y=3
+5		DO WHILE (y<=11)
+6			x=x*y
+7			y=y+2
+8		END DO
+9		WRITE(*,*) x
+10	END
+
