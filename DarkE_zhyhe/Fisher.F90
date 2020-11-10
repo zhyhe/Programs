@@ -228,10 +228,12 @@ module Fisher
                       at = at+1.0/4.0*sin(2.*Sgama)*sin(2.*Spsi)*sin(2.*Sdelta)*cos(Salpha-Slambdar-t)
                       at = at-1.0/2.0*cos(2.*Sgama)*cos(Spsi)*sin(2.*Sdelta)*sin(Salpha-Slambdar-t)
                       at = at+3.0/4.0*sin(2.*Sgama)*cos(Spsi)*cos(Spsi)*cos(Sdelta)*cos(Sdelta)
+
                       bt = cos(2*Sgama)*sin(Spsi)*sin(Sdelta)*cos(2.*(Salpha-Slambdar-t))
                       bt = bt+1.0/4.0*sin(2.*Sgama)*(3.-cos(2.*Spsi))*sin(Sdelta)*sin(2.*(Salpha-Slambdar-t))
                       bt = bt+cos(2.*Sgama)*cos(Spsi)*cos(Sdelta)*cos(Salpha-Slambdar-t)
                       bt = bt+1.0/2.0*sin(2.*Sgama)*sin(2.*Spsi)*cos(Sdelta)*sin(Salpha-Slambdar-t)
+
                       F1a = sin(Szeta)*(at*cos(2.0*Svarphi)+bt*sin(2.0*Svarphi))
                       Fxa = sin(Szeta)*(bt*cos(2.0*Svarphi)-at*sin(2.0*Svarphi))
               end subroutine Pat_Func
