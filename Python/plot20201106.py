@@ -1,5 +1,6 @@
 # coding: utf-8
 import matplotlib.pyplot as plt
+plt.style.use('./images/presentation.mplstyle')
 
 # figsize = 11, 9
 # figure, ax = plt.subplots(figsize = figsize)
