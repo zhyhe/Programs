@@ -1,56 +1,44 @@
         module sub
+                use typedef
                 use fiducial
                 implicit none
         contains
-        subroutine Fisher_LIGO_general(psi,lambda,gama,zeta,  ! input: (degree, GW detector)
-     $                            para,                  ! nine parameters
+        subroutine Fisher_LIGO_general(Detec,         ! input: (degree, GW detector)
+     $                            S,                  ! nine parameters
      $                            fbase,Nbase,imax,  ! input for noise
      $                            Fij,SNR)               ! output
-!   para(1)=alpha; para(2)=delta; para(3)=varphi; para(4)=iota
-!   para(5)=t_c;   para(6)=psi_c
-!   para(7)=dL
-!   para(8)=M;     para(9)=eta;
 !       program main
         implicit none
-!       double precision :: alpha,delta,varphi
         double precision :: lambda,psi
         double precision :: gama,zeta
-!       double precision :: iota
         double precision :: f
-!       double precision :: M,eta,t_c,psi_c
-!       double precision :: dL
         double precision :: FLSO
         double complex   :: dihat
-!       double precision :: m1,m2
         double precision :: ef
         integer          :: turn_on_off
         double complex   :: dihat2(1:9),D_dihat(1:9)
         double precision :: Fij(1:9,1:9)
         double precision :: SNR,SNR2
         integer          :: i,j,k
+        type(source)     :: S
+        type(detector)   :: Detec
         double precision :: para(9),para2(9),step(9)
         double precision :: deltaef
         double precision :: DO1,DO2,DO3
         double precision :: fbase(imax),Nbase(imax)
         integer          :: imax
-        integer :: ith0, ith1, ith2, ith3, ith4, ith5
-        integer :: ith6, ith7, ith8, ith9
-        ith0=1
-        ith1=1
-        ith2=1
-        ith3=1
-        ith4=1
-        ith5=1
-        ith6=1
-        ith7=1
-        ith8=1
-        ith9=1
+        integer :: ith(0:9)
+        ith=1
+        psi=Detec.psi
+        lambda=Detec.lambda
+        gama=Detec.gama
+        zeta=Detec.zeta
 !   para(1)=alpha; para(2)=delta; para(3)=varphi; para(4)=iota
 !   para(5)=t_c;   para(6)=psi_c
 !   para(7)=dL
 !   para(8)=M;     para(9)=eta;
-
-!!!! input
+        para=(/S.alpha,S.delta,S.varphi,S.iota,
+     $         S.t_c,S.psi_c,S.lndL,S.M,S.eta /)
 !c      para(1)  =  70.0 !alpha, degree
         step(1)  =  0.001
 !c      para(2)  =  20.0 !delta, degree
@@ -64,8 +52,10 @@
 !       M=m1+m2   !!! unit M_sun
 !       eta=(m1*m2)/(M*M)
 !c      para(8)  =  2.8    !!! M, M_sun
+        para(8)  =  S.M    !!! M, M_sun
         step(8)  =  0.00001
 !c      para(9)  =  0.25   !!! eta
+        para(9)  =  S.eta   !!! eta
         step(9)  =  0.000001
 !c      para(5)  =  0.0    !!! t_c: second
         step(5)  =  0.00001
@@ -73,21 +63,13 @@
         step(6)  =  0.0001
 !c      para(7)  =  log(1000.0) !!! ln(d_L/Mpc)
         step(7)  =  0.001
-        do i=1,9
-        para2(i)=para(i)+step(i)
-        enddo
-!!!! GW detector parameters 
-!c      psi=20.0
-!c      lambda=50.0
-!c      gama=10.0
-!c      zeta=90.0
         turn_on_off=1
         FLSO=F0/para(8)  !!!!unit Hz
         deltaef=0.001
 !!!!!!!! calculate the case with time-dependent
-!c      write(*,*) '*****************************************************'
         Fij=0.0
         SNR2=0.0
+        open(12,file='/home/zhyhe/workspace/results/H.txt')
         do ef=log(10.001),log(2.0*FLSO),deltaef
         f=exp(ef)
         call dihat_general(psi,lambda,gama,zeta,     ! input: (degree, GW detector)
@@ -96,90 +78,23 @@
      $                 para(8),para(9),para(7),      ! input: GW source masses and distance
      $                 para(5),para(6),              ! input: initial condition
      $                 f,FLSO,                       ! input: frequency and merge frequency
-     $                 fbase,Nbase,ith0,imax,         ! input for noise
+     $                 fbase,Nbase,ith(0),imax,         ! input for noise
      $                 turn_on_off,                  ! input: =0 if not icluding S_i(f); =1 if including S_i(f)
      $                 dihat)                        ! output
+        write(12,*) f,',',real(dihat)
+        do i=1,9
+        para2=para
+        para2(i)=para(i)+step(i)
         call dihat_general(psi,lambda,gama,zeta,     ! input: (degree, GW detector)
-     $                 para2(1),para(2),para(3),      ! input: (degree, GW source)
-     $                 para(4),                      ! input: (degree, GW source)
-     $                 para(8),para(9),para(7),      ! input: GW source masses and distance
-     $                 para(5),para(6),              ! input: initial condition
-     $                 f,FLSO,                       ! input: frequency and merge frequency
-     $                 fbase,Nbase,ith1,imax,         ! input for noise
-     $                 turn_on_off,                  ! input: =0 if not icluding S_i(f); =1 if including S_i(f)
-     $                 dihat2(1))                    ! output
-        call dihat_general(psi,lambda,gama,zeta,     ! input: (degree, GW detector)
-     $                 para(1),para2(2),para(3),      ! input: (degree, GW source)
-     $                 para(4),                      ! input: (degree, GW source)
-     $                 para(8),para(9),para(7),      ! input: GW source masses and distance
-     $                 para(5),para(6),              ! input: initial condition
-     $                 f,FLSO,                       ! input: frequency and merge frequency
-     $                 fbase,Nbase,ith2,imax,         ! input for noise
-     $                 turn_on_off,                  ! input: =0 if not icluding S_i(f); =1 if including S_i(f)
-     $                 dihat2(2))                    ! output
-        call dihat_general(psi,lambda,gama,zeta,     ! input: (degree, GW detector)
-     $                 para(1),para(2),para2(3),      ! input: (degree, GW source)
-     $                 para(4),                      ! input: (degree, GW source)
-     $                 para(8),para(9),para(7),      ! input: GW source masses and distance
-     $                 para(5),para(6),              ! input: initial condition
-     $                 f,FLSO,                       ! input: frequency and merge frequency
-     $                 fbase,Nbase,ith3,imax,         ! input for noise
-     $                 turn_on_off,                  ! input: =0 if not icluding S_i(f); =1 if including S_i(f)
-     $                 dihat2(3))                    ! output
-        call dihat_general(psi,lambda,gama,zeta,     ! input: (degree, GW detector)
-     $                 para(1),para(2),para(3),      ! input: (degree, GW source)
+     $                 para2(1),para2(2),para2(3),      ! input: (degree, GW source)
      $                 para2(4),                      ! input: (degree, GW source)
-     $                 para(8),para(9),para(7),      ! input: GW source masses and distance
-     $                 para(5),para(6),              ! input: initial condition
+     $                 para2(8),para2(9),para2(7),      ! input: GW source masses and distance
+     $                 para2(5),para2(6),              ! input: initial condition
      $                 f,FLSO,                       ! input: frequency and merge frequency
-     $                 fbase,Nbase,ith4,imax,         ! input for noise
+     $                 fbase,Nbase,ith(i),imax,         ! input for noise
      $                 turn_on_off,                  ! input: =0 if not icluding S_i(f); =1 if including S_i(f)
-     $                 dihat2(4))                    ! output
-        call dihat_general(psi,lambda,gama,zeta,     ! input: (degree, GW detector)
-     $                 para(1),para(2),para(3),      ! input: (degree, GW source)
-     $                 para(4),                      ! input: (degree, GW source)
-     $                 para2(8),para(9),para(7),      ! input: GW source masses and distance
-     $                 para(5),para(6),              ! input: initial condition
-     $                 f,FLSO,                       ! input: frequency and merge frequency
-     $                 fbase,Nbase,ith8,imax,         ! input for noise
-     $                 turn_on_off,                  ! input: =0 if not icluding S_i(f); =1 if including S_i(f)
-     $                 dihat2(8))                    ! output
-        call dihat_general(psi,lambda,gama,zeta,     ! input: (degree, GW detector)
-     $                 para(1),para(2),para(3),      ! input: (degree, GW source)
-     $                 para(4),                      ! input: (degree, GW source)
-     $                 para(8),para2(9),para(7),      ! input: GW source masses and distance
-     $                 para(5),para(6),              ! input: initial condition
-     $                 f,FLSO,                       ! input: frequency and merge frequency
-     $                 fbase,Nbase,ith9,imax,         ! input for noise
-     $                 turn_on_off,                  ! input: =0 if not icluding S_i(f); =1 if including S_i(f)
-     $                 dihat2(9))                    ! output
-        call dihat_general(psi,lambda,gama,zeta,     ! input: (degree, GW detector)
-     $                 para(1),para(2),para(3),      ! input: (degree, GW source)
-     $                 para(4),                      ! input: (degree, GW source)
-     $                 para(8),para(9),para(7),      ! input: GW source masses and distance
-     $                 para2(5),para(6),              ! input: initial condition
-     $                 f,FLSO,                       ! input: frequency and merge frequency
-     $                 fbase,Nbase,ith5,imax,         ! input for noise
-     $                 turn_on_off,                  ! input: =0 if not icluding S_i(f); =1 if including S_i(f)
-     $                 dihat2(5))                    ! output
-        call dihat_general(psi,lambda,gama,zeta,     ! input: (degree, GW detector)
-     $                 para(1),para(2),para(3),      ! input: (degree, GW source)
-     $                 para(4),                      ! input: (degree, GW source)
-     $                 para(8),para(9),para(7),      ! input: GW source masses and distance
-     $                 para(5),para2(6),              ! input: initial condition
-     $                 f,FLSO,                       ! input: frequency and merge frequency
-     $                 fbase,Nbase,ith6,imax,         ! input for noise
-     $                 turn_on_off,                  ! input: =0 if not icluding S_i(f); =1 if including S_i(f)
-     $                 dihat2(6))                    ! output
-        call dihat_general(psi,lambda,gama,zeta,     ! input: (degree, GW detector)
-     $                 para(1),para(2),para(3),      ! input: (degree, GW source)
-     $                 para(4),                      ! input: (degree, GW source)
-     $                 para(8),para(9),para2(7),      ! input: GW source masses and distance
-     $                 para(5),para(6),              ! input: initial condition
-     $                 f,FLSO,                       ! input: frequency and merge frequency
-     $                 fbase,Nbase,ith7,imax,         ! input for noise
-     $                 turn_on_off,                  ! input: =0 if not icluding S_i(f); =1 if including S_i(f)
-     $                 dihat2(7))                    ! output
+     $                 dihat2(i))                    ! output
+        enddo
           do i=1,9
             D_dihat(i)=(dihat2(i)-dihat)/step(i)
           enddo
@@ -195,12 +110,10 @@
      $            *( Real(dihat)*Real(dihat)
      $             +aimag(dihat)*aimag(dihat))
         enddo
+        close(12)
         SNR=sqrt(SNR2)
-!       Fij(7,5)=0.0
-!       Fij(5,7)=0.0
-!       Fij(7,6)=0.0
-!       Fij(6,7)=0.0
         end
+
         subroutine dihat_general(psi,lambda,gama,zeta,  ! input: (degree, GW detector)
      $                           alpha,delta,varphi,    ! input: (degree, GW source)
      $                           iota,                  ! input: (degree, GW source)
