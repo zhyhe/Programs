@@ -173,7 +173,7 @@
 	close(9)
 	fact1=( x-f)/(x-zx)
 	fact2=(f-zx)/(x-zx)
-	s_fit=((zy*fact1+y*fact2)*(10.0**(20.0)))**2.0
+	s_fit=(zy*fact1+y*fact2)**2
 	ith=i
 	end
 

@@ -1,3 +1,48 @@
+        module fiducial
+                use constants
+                implicit none
+        contains
+        subroutine dL_Func(dL, z0)
+           implicit none
+           double precision :: dL, z0
+           double precision :: h, sum, z
+           double precision :: O_Lambda = 0.685, O_m = 0.315
+           integer :: counter = 0
+           sum = 0D0
+           z = 0D0
+           h = z0 / 1000.0D0
+         sum = 0.5D0 * h / ((O_m * ((1.0D0 + z0)**3) + O_Lambda)**0.5D0)
+           sum = sum + 0.5D0 * h / ((O_m +  O_Lambda)**0.5D0)
+           do counter = 1, 999, 1
+              z = h+ z
+              sum = sum+1.0D0*h/((O_m*((1.0D0+z)**3)+O_Lambda)**0.5D0)
+           end do
+           dL = 1.0D0 * sum * (1 + z0) * c0 / H0
+        end
+        SUBROUTINE INVERSEMATRIX(y,a,n)
+!!!    y is output
+!!!    a is  input
+        implicit none
+        integer ii,jj
+        double precision cc(n,n)
+        integer n,indx(n),i,j
+        double precision a(n,n),y(n,n),d,aa(n,n)
+        do ii=1,n
+        do jj=1,n
+        aa(ii,jj)=a(ii,jj)
+        enddo
+        enddo
+        do i=1,n
+                do j=1,n
+                y(i,j)=0
+                enddo
+        y(i,i)=1.0
+        enddo
+        call LUDCMP(aa,n,n,indx,d)
+        do j=1,n
+        call LUBKSB(aa,n,n,indx,y(1,j))
+        enddo
+        end
       SUBROUTINE ludcmp(a,n,np,indx,d)
       implicit none
       INTEGER n,np,indx(n)
@@ -57,7 +102,6 @@
 19    continue
       return
       END
-
       SUBROUTINE lubksb(a,n,np,indx,b)
       implicit none
       INTEGER n,np,indx(n)
@@ -87,98 +131,5 @@
 14    continue
       return
       END
-
-
- 
-
-!	SUBROUTINE INVERSEMATRIX(y,a,n)
-!	implicit none
-!	integer ii,jj
-!	double precision cc(5,5)
-!	integer n,indx(5),i,j
-!	double precision a(5,5),y(5,5),d,aa(5,5)
-!	do ii=1,n
-!	do jj=1,5
-!	aa(ii,jj)=a(ii,jj)
-!	enddo
-!	enddo
-!	do i=1,n
-!		do j=1,n
-!		y(i,j)=0
-!		enddo
-!	y(i,i)=1.0
-!	enddo
-!	call LUDCMP(aa,n,n,indx,d)
-!	do j=1,n
-!	call LUBKSB(aa,n,n,indx,y(1,j))
-!	enddo
-!	end
-
-
-	SUBROUTINE INVERSEMATRIX(y,a,n)
-!!!    y is output
-!!!    a is  input
-	implicit none
-	integer ii,jj
-	double precision cc(n,n)
-	integer n,indx(n),i,j
-	double precision a(n,n),y(n,n),d,aa(n,n)
-	do ii=1,n
-	do jj=1,n
-	aa(ii,jj)=a(ii,jj)
-	enddo
-	enddo
-	do i=1,n
-		do j=1,n
-		y(i,j)=0
-		enddo
-	y(i,i)=1.0
-	enddo
-	call LUDCMP(aa,n,n,indx,d)
-	do j=1,n
-	call LUBKSB(aa,n,n,indx,y(1,j))
-	enddo
-	end
-
-
-
-
-!	program main
-!	implicit none
-!	double precision a(3,3),y(3,3)
-!	integer n,i,ii,j,jj
-!	n=3
-!	a(1,1)=1.2
-!	a(2,2)=3.4
-!	a(3,3)=5.6
-!	a(1,2)=0.7
-!	a(2,1)=a(1,2)
-!	a(1,3)=1.9
-!	a(3,1)=a(1,3)
-!	a(2,3)=0.5
-!	a(3,2)=a(2,3)
-!	call INVERSEMATRIX(y,a,n)
-!	do i=1,n
-!	do j=1,n
-!	write(*,*) y(i,j)
-!	enddo
-!	enddo
-!	n=3
-!	a(1,1)=1.8
-!	a(2,2)=3.4
-!	a(3,3)=5.6
-!	a(1,2)=0.7
-!	a(2,1)=a(1,2)
-!	a(1,3)=1.9
-!	a(3,1)=a(1,3)
-!	a(2,3)=0.5
-!	a(3,2)=a(2,3)
-!	call INVERSEMATRIX(y,a,n)
-!	do i=1,n
-!	do j=1,n
-!	write(*,*) y(i,j)
-!	enddo
-!	enddo
-!	end
-!
+        end
 
