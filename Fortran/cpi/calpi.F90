@@ -68,7 +68,7 @@ End Module PI_Calc_Mod
 Program www_fcode_cn
   use PI_Calc_Mod
   Implicit None
-  Integer , parameter :: N = 10000
+  Integer , parameter :: N = 150000
   integer(Kind=PI_KIND) :: myPI(N)
   call CalcPI( N , myPI )
   open(10,file='pi.dat')

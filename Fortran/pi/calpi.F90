@@ -1,7 +1,7 @@
 Program calpi
         implicit none
         integer,parameter :: n=10000
-        real(8),parameter :: pi0=3.141592653589793_8
+        real(8),parameter :: pi0=3.141592653589793238_8
         integer :: i,s
         real(8) :: pi,a,b
         real(8) :: start,finish
@@ -14,7 +14,6 @@ Program calpi
         pi=pi*a*b
         enddo
         pi=pi*2
-        print*,pi
         call cpu_time(finish)
         print'(F18.15,ES10.0E1,F10.0)',pi,pi-pi0,(finish-start)*1D6
 
