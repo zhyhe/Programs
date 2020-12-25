@@ -17,6 +17,7 @@ Program gw170817
         real(8)          :: FLSO
 
         real(8)    :: F1,Fx,Fb,Fs,Fv1,Fv2
+        print*,H0
 
 
         z0=0.01D0

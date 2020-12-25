@@ -11,7 +11,7 @@
 	namelist /list/ x1,x2,x3 /list2/ y2,y4
 	write(*,list)
 	write(*,list2)
-	print 100, m
+	print '(I10$)', m
 	100 format(I10)
       print *,pi
 	end

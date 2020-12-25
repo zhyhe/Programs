@@ -437,7 +437,7 @@ module Fisher
 !       write(*, *) Cplus(3, 6), Ccross(3, 6), Cplus(3, 4), Ccross(3, 4)
 !       write(*, *) Dplus(3, 6), Dcross(3, 6), Dplus(3, 4), Dcross(3, 4)
 !       write(*, *)
-        end
+        end subroutine PandPHI
 
               subroutine noise(s_fit,f,fbase,Nbase,ith,imax)
                       implicit none 
