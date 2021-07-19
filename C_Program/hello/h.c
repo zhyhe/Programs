@@ -1,26 +1,47 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include<math.h>
-#include <random>
 int main(){
-	int i,j=0;
-	for(i=0;i<1;i++){
-		printf("I love you.\n");
+	int i,j;
+	int M,N;
+
+	scanf("%d %d",&N,&M);
+	printf("M=%d,N=%d\n",M,N);
+
+	int *pb;
+	pb=(int *)malloc(N*sizeof(int));
+	if(pb==NULL){
+		printf("内存不足\n");
+		exit(1);
 	}
-	int dist;
-	int r=StdRandom.discrete(dist);
-	printf("%d\t",r);
+	for(i=1;i<=N;i++){
+		scanf("%d",&pb[i-1]);
+		printf("p[%d]=%d ",i-1,pb[i-1]);
+	}
+	printf("\n");
 
-	//double cx[][]
+	char c;
+	int k,l,o;
 
-	//double x0 = cx[r][0]*x +cx[r][1]*y + cx[r][2];
-	//double y0 = cy[r][0]*x +cy[r][1]*y + cy[r][2];
-	//x=x0;
-	//y=y0;
+	for(i=1;i<=M;i++){
+		scanf("\n%c %d %d",&c,&k,&l);
+		switch(c){
+			case('Q'):
+				o=pb[k-1];
+				for(j=k;j<l;j++) if(pb[j]>o) o=pb[j];
+				printf("%d到%d的最高成绩是%d\n",k,l,o);
+				break;
 
-	//StdDraw.point(x,y);
-
-	//if(t%100=0){
-	//	StdDraw.show();
-	//	StdDraw.pause(10);
-	//}`
+			case('U'):
+				pb[k-1]=l;
+				for(o=1;o<=N;o++){
+					printf("p[%d]=%d ",o-1,pb[o-1]);
+				}
+				printf("\n");
+				break;
+			default:
+				printf("ERROR");
+				exit(1);
+		}
+	}
 }
